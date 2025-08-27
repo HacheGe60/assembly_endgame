@@ -1,4 +1,5 @@
 import React from "react";
+import { languages } from "./languages.js";
 
 /**
  * Project planning:
@@ -31,6 +32,34 @@ import React from "react";
  */
 
 export default function AssemblyEndgame() {
+  const [currentWord, setCurrentWord] = React.useState('react');
+
+  const letterElements =
+    currentWord.split('').map((letter, index) => {
+      return (
+        <span key={index}>{letter}</span>
+      );
+    });
+
+  const languageElements =
+    languages.map(lang => {
+      const styles = {
+        backgroundColor: lang.backgroundColor,
+        color: lang.color
+      };
+      return (
+        <span
+          key={lang.name}
+          style={styles}
+          className="chip"
+        >
+          {lang.name}
+        </span>
+      );
+    });
+
+
+
   return (
     <main>
       <header>
@@ -41,6 +70,12 @@ export default function AssemblyEndgame() {
       <section className="game-status">
         <h2>You win!</h2>
         <p>Well done! 🎉</p>
+      </section>
+      <section className="language-chips">
+        {languageElements}
+      </section>
+      <section className="word">
+        {letterElements}
       </section>
     </main>
   );
