@@ -1,62 +1,54 @@
-import React from "react";
-import { languages } from "./languages.js";
+import { useState } from "react";
+import { languages } from "./languages";
 
 /**
- * Project planning:
+ * Goal: Allow the user to start guessing the letters
  * 
- * Questions to ask yourself before writing any code:
+ * Challenge: TBA
  * 
- * - What are the main containers of elements I need
- *   in this app?
- *   Header: game title, game description
- *   Status banner (info, success, error, warning)
- *   Tech chips row
- *   Game board
- *   Keyboard
- *   Footer (new game)
- * 
- * - What data will I need to store in state?
- *   solution, guesses, wrongCount, phase(idle, playing, won, lost), maxAttempts
- *    
- * 
- * - What values will need to be saved in state vs.
- *   what values can be derived from the state?
- *   lettersRevealed, wrongGuesses, attemptsLeft, gameWon, gameLost, keyStatus
- * 
- * 
- * - How will the user interact with the app? What
- *   events do I need to handle?
- *   keydown, click on keyboard. New Game,
- * 
- * 
+ * Think: what would be the best way to store the user's
+ * guessed letters? 
  */
 
 export default function AssemblyEndgame() {
-  const [currentWord, setCurrentWord] = React.useState('react');
+  const [currentWord, setCurrentWord] = useState("react");
 
-  const letterElements =
-    currentWord.split('').map((letter, index) => {
-      return (
-        <span key={index}>{letter}</span>
-      );
-    });
+  const [guessedLetters, setGuessedLetters] = useState([]);
+  console.log(guessedLetters);
 
-  const languageElements =
-    languages.map(lang => {
-      const styles = {
-        backgroundColor: lang.backgroundColor,
-        color: lang.color
-      };
-      return (
-        <span
-          key={lang.name}
-          style={styles}
-          className="chip"
-        >
-          {lang.name}
-        </span>
-      );
-    });
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+  function addGuessedLetter(letter) {
+    setGuessedLetters(
+      prevLetters => prevLetters.includes(letter) ? prevLetters :
+        [...prevLetters, letter]);
+  }
+
+  const languageElements = languages.map(lang => {
+    const styles = {
+      backgroundColor: lang.backgroundColor,
+      color: lang.color
+    };
+    return (
+      <span
+        className="chip"
+        style={styles}
+        key={lang.name}
+      >
+        {lang.name}
+      </span>
+    );
+  });
+
+  const letterElements = currentWord.split("").map((letter, index) => (
+    <span key={index}>{letter.toUpperCase()}</span>
+  ));
+
+  const keyboardElements = alphabet.split("").map(letter => (
+    <button
+      key={letter}
+      onClick={() => addGuessedLetter(letter)}>{letter.toUpperCase()}</button>
+  ));
 
 
 
@@ -77,6 +69,10 @@ export default function AssemblyEndgame() {
       <section className="word">
         {letterElements}
       </section>
+      <section className="keyboard">
+        {keyboardElements}
+      </section>
+      <button className="new-game">New Game</button>
     </main>
   );
 }
