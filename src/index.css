@@ -36,6 +36,7 @@ section.game-status {
   align-items: center;
   color: #f9f4da;
   border-radius: .25em;
+  margin-block: 1.88em;
 }
 
 .game-status>h2 {
