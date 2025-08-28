@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { languages } from "./languages";
+import clsx from "clsx";
 
 /**
  * Goal: Allow the user to start guessing the letters
@@ -14,7 +15,6 @@ export default function AssemblyEndgame() {
   const [currentWord, setCurrentWord] = useState("react");
 
   const [guessedLetters, setGuessedLetters] = useState([]);
-  console.log(guessedLetters);
 
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
@@ -23,6 +23,8 @@ export default function AssemblyEndgame() {
       prevLetters => prevLetters.includes(letter) ? prevLetters :
         [...prevLetters, letter]);
   }
+
+  console.log(guessedLetters);
 
   const languageElements = languages.map(lang => {
     const styles = {
@@ -44,13 +46,22 @@ export default function AssemblyEndgame() {
     <span key={index}>{letter.toUpperCase()}</span>
   ));
 
-  const keyboardElements = alphabet.split("").map(letter => (
-    <button
-      key={letter}
-      onClick={() => addGuessedLetter(letter)}>{letter.toUpperCase()}</button>
-  ));
+  const keyboardElements = alphabet.split("").map(letter => {
+    const guessed = guessedLetters.includes(letter);
+    const hit = guessed && currentWord.includes(letter);
 
-
+    return (
+      <button
+        key={letter}
+        onClick={() => addGuessedLetter(letter)}
+        disabled={guessed}
+        className={clsx(
+          'key',
+          guessed && (hit ? 'guessed' : 'wrong'),
+        )}
+      >{letter.toUpperCase()}</button>
+    );
+  });
 
   return (
     <main>
@@ -76,3 +87,4 @@ export default function AssemblyEndgame() {
     </main>
   );
 }
+
