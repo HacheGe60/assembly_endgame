@@ -47,18 +47,20 @@ export default function AssemblyEndgame() {
   ));
 
   const keyboardElements = alphabet.split("").map(letter => {
-    const guessed = guessedLetters.includes(letter);
-    const hit = guessed && currentWord.includes(letter);
+    const isGuessed = guessedLetters.includes(letter);
+    const isCorrect = isGuessed && currentWord.includes(letter);
+    const isWrong = isGuessed && !isCorrect;
+    const className = clsx({
+      correct: isCorrect,
+      wrong: isWrong
+    });
 
     return (
       <button
         key={letter}
         onClick={() => addGuessedLetter(letter)}
-        disabled={guessed}
-        className={clsx(
-          'key',
-          guessed && (hit ? 'guessed' : 'wrong'),
-        )}
+        disabled={isGuessed}
+        className={className}
       >{letter.toUpperCase()}</button>
     );
   });
