@@ -17,8 +17,7 @@ export default function AssemblyEndgame() {
   const [guessedLetters, setGuessedLetters] = useState([]);
 
   // Derived values
-  const wrongGuessCount = guessedLetters.map(letter => !currentWord.includes(letter)).filter(isWrong => isWrong).length;
-  console.log(wrongGuessCount);
+  const wrongGuessCount = guessedLetters.filter(letter => !currentWord.includes(letter)).length;
 
 
   // Static values
@@ -30,16 +29,23 @@ export default function AssemblyEndgame() {
         [...prevLetters, letter]);
   }
 
-  const languageElements = languages.map(lang => {
+  const languageElements = languages.map((lang, index) => {
     const styles = {
       backgroundColor: lang.backgroundColor,
       color: lang.color
     };
+
+    const n = Math.min(wrongGuessCount, languages.length);
+
+    const isLost = index < n;
+
+    const className = clsx("chip", isLost && "lost");
+
     return (
       <span
-        className="chip"
-        style={styles}
         key={lang.name}
+        style={styles}
+        className={className}
       >
         {lang.name}
       </span>
@@ -71,6 +77,11 @@ export default function AssemblyEndgame() {
     );
   });
 
+  const newGameElement = (
+    (wrongGuessCount >= languages.length - 1 || currentWord.split('').every(letter => guessedLetters.includes(letter))) &&
+    <button className="new-game">New Game</button>
+  );
+
   return (
     <main>
       <header>
@@ -91,7 +102,7 @@ export default function AssemblyEndgame() {
       <section className="keyboard">
         {keyboardElements}
       </section>
-      <button className="new-game">New Game</button>
+      {newGameElement}
     </main>
   );
 }
