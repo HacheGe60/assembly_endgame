@@ -12,10 +12,16 @@ import clsx from "clsx";
  */
 
 export default function AssemblyEndgame() {
+  // State values
   const [currentWord, setCurrentWord] = useState("react");
-
   const [guessedLetters, setGuessedLetters] = useState([]);
 
+  // Derived values
+  const wrongGuessCount = guessedLetters.map(letter => !currentWord.includes(letter)).filter(isWrong => isWrong).length;
+  console.log(wrongGuessCount);
+
+
+  // Static values
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
   function addGuessedLetter(letter) {
@@ -23,8 +29,6 @@ export default function AssemblyEndgame() {
       prevLetters => prevLetters.includes(letter) ? prevLetters :
         [...prevLetters, letter]);
   }
-
-  console.log(guessedLetters);
 
   const languageElements = languages.map(lang => {
     const styles = {
@@ -43,7 +47,9 @@ export default function AssemblyEndgame() {
   });
 
   const letterElements = currentWord.split("").map((letter, index) => (
-    <span key={index}>{letter.toUpperCase()}</span>
+    <span key={index}>
+      {guessedLetters.includes(letter) ? letter.toUpperCase() : ""}
+    </span>
   ));
 
   const keyboardElements = alphabet.split("").map(letter => {
