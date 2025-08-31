@@ -60,11 +60,17 @@ export default function AssemblyEndgame() {
     );
   });
 
-  const letterElements = currentWord.split("").map((letter, index) => (
-    <span key={index}>
-      {guessedLetters.includes(letter) ? letter.toUpperCase() : ""}
-    </span>
-  ));
+  const letterElements = currentWord.split("").map((letter, index) => {
+    const wasGuessed = guessedLetters.includes(letter);
+    const reveal = wasGuessed || isGameLost;
+    const isMissing = isGameLost && !wasGuessed;
+
+    return (
+      <span key={index} className={clsx(isMissing && "missing")}>
+        {reveal ? letter.toUpperCase() : ""}
+      </span>
+    );
+  });
 
   const keyboardElements = alphabet.split("").map(letter => {
     const isGuessed = guessedLetters.includes(letter);
