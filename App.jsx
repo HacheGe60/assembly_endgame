@@ -82,6 +82,11 @@ export default function AssemblyEndgame() {
     <button className="new-game">New Game</button>
   );
 
+  const statusElement = (
+    wrongGuessCount >= languages.length - 1 ? <span className='lost'><h2>Game Over</h2><p>You lose! Better start learning Assembly 😭</p></span> : currentWord.split('').every(letter => guessedLetters.includes(letter)) ? <span className='won'><h2>You win!</h2><p>Well done! 🎉</p></span> : <span className='attempts'><h2>Attempts {wrongGuessCount} / {languages.length - 1}</h2></span>
+
+  );
+
   return (
     <main>
       <header>
@@ -90,8 +95,7 @@ export default function AssemblyEndgame() {
           programming world safe from Assembly!</p>
       </header>
       <section className="game-status">
-        <h2>You win!</h2>
-        <p>Well done! 🎉</p>
+        {statusElement}
       </section>
       <section className="language-chips">
         {languageElements}
