@@ -2,6 +2,7 @@ import { useState } from "react";
 import { clsx } from "clsx";
 import { languages } from "./languages";
 import { getWord, getFarewellText } from "./utils";
+import Confetti from "react-confetti";
 
 
 /**
@@ -116,6 +117,7 @@ export default function AssemblyEndgame() {
         <>
           <h2>You win!</h2>
           <p>Well done! 🎉</p>
+          <Confetti />
         </>
       );
     }

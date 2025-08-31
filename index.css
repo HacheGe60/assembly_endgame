@@ -123,8 +123,7 @@ section.word>span {
 }
 
 section.word>span.missing {
-  background-color: #ec5d49;
-  color: #1e1e1e;
+  color: #ec5d49;
   border-bottom-color: #D7D7D7;
 }
 
