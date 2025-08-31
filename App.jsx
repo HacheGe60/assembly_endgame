@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { clsx } from "clsx";
 import { languages } from "./languages";
-import { getFarewellText } from "./utils";
+import { getWord, getFarewellText } from "./utils";
+
 
 /**
  * Challenge: Bid farewell to each programming language
@@ -16,7 +17,7 @@ import { getFarewellText } from "./utils";
 
 export default function AssemblyEndgame() {
   // State values
-  const [currentWord, setCurrentWord] = useState("react");
+  const [currentWord, setCurrentWord] = useState(() => getWord());
   const [guessedLetters, setGuessedLetters] = useState([]);
 
   // Derived values
@@ -125,6 +126,11 @@ export default function AssemblyEndgame() {
     return null;
   }
 
+  function startNewGame() {
+    setCurrentWord(getWord());
+    setGuessedLetters([]);
+  }
+
   return (
     <main>
       <header>
@@ -167,14 +173,13 @@ export default function AssemblyEndgame() {
         <p>Current word: {currentWord.split("").map(letter =>
           guessedLetters.includes(letter) ? letter + "." : "blank.")
           .join(" ")}</p>
-
       </section>
 
       <section className="keyboard">
         {keyboardElements}
       </section>
 
-      {isGameOver && <button className="new-game">New Game</button>}
+      {isGameOver && <button className="new-game" onClick={startNewGame}>New Game</button>}
     </main>
   );
 }
