@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { clsx } from "clsx";
 import { languages } from "./languages";
-import clsx from "clsx";
 
 /**
- * Goal: Allow the user to start guessing the letters
+ * Goal: Add in the incorrect guesses mechanism to the game
  * 
- * Challenge: TBA
+ * Challenge:
+ * Conditionally render either the "won" or "lost" statuses
+ * from the design, both the text and the styles, based on the
+ * new derived variables.
  * 
- * Think: what would be the best way to store the user's
- * guessed letters? 
+ * Note: We always want the surrounding `section` to be rendered,
+ * so only change the content inside that section. Otherwise the
+ * content on the page would jump around a bit too much.
  */
 
 export default function AssemblyEndgame() {
@@ -17,35 +21,36 @@ export default function AssemblyEndgame() {
   const [guessedLetters, setGuessedLetters] = useState([]);
 
   // Derived values
-  const wrongGuessCount = guessedLetters.filter(letter => !currentWord.includes(letter)).length;
-
+  const wrongGuessCount =
+    guessedLetters.filter(letter => !currentWord.includes(letter)).length;
+  const isGameWon =
+    currentWord.split("").every(letter => guessedLetters.includes(letter));
+  const isGameLost = wrongGuessCount >= languages.length - 1;
+  const isGameOver = isGameWon || isGameLost;
 
   // Static values
   const alphabet = "abcdefghijklmnopqrstuvwxyz";
 
   function addGuessedLetter(letter) {
-    setGuessedLetters(
-      prevLetters => prevLetters.includes(letter) ? prevLetters :
-        [...prevLetters, letter]);
+    setGuessedLetters(prevLetters =>
+      prevLetters.includes(letter) ?
+        prevLetters :
+        [...prevLetters, letter]
+    );
   }
 
   const languageElements = languages.map((lang, index) => {
+    const isLanguageLost = index < wrongGuessCount;
     const styles = {
       backgroundColor: lang.backgroundColor,
       color: lang.color
     };
-
-    const n = Math.min(wrongGuessCount, languages.length);
-
-    const isLost = index < n;
-
-    const className = clsx("chip", isLost && "lost");
-
+    const className = clsx("chip", isLanguageLost && "lost");
     return (
       <span
-        key={lang.name}
-        style={styles}
         className={className}
+        style={styles}
+        key={lang.name}
       >
         {lang.name}
       </span>
@@ -61,7 +66,7 @@ export default function AssemblyEndgame() {
   const keyboardElements = alphabet.split("").map(letter => {
     const isGuessed = guessedLetters.includes(letter);
     const isCorrect = isGuessed && currentWord.includes(letter);
-    const isWrong = isGuessed && !isCorrect;
+    const isWrong = isGuessed && !currentWord.includes(letter);
     const className = clsx({
       correct: isCorrect,
       wrong: isWrong
@@ -69,23 +74,19 @@ export default function AssemblyEndgame() {
 
     return (
       <button
+        className={className}
         key={letter}
         onClick={() => addGuessedLetter(letter)}
-        disabled={isGuessed}
-        className={className}
-      >{letter.toUpperCase()}</button>
+      >
+        {letter.toUpperCase()}
+      </button>
     );
   });
 
-  const newGameElement = (
-    (wrongGuessCount >= languages.length - 1 || currentWord.split('').every(letter => guessedLetters.includes(letter))) &&
-    <button className="new-game">New Game</button>
-  );
-
-  const statusElement = (
-    wrongGuessCount >= languages.length - 1 ? <span className='lost'><h2>Game Over</h2><p>You lose! Better start learning Assembly 😭</p></span> : currentWord.split('').every(letter => guessedLetters.includes(letter)) ? <span className='won'><h2>You win!</h2><p>Well done! 🎉</p></span> : <span className='attempts'><h2>Attempts {wrongGuessCount} / {languages.length - 1}</h2></span>
-
-  );
+  const gameStatusClass = clsx("game-status", {
+    won: isGameWon,
+    lost: isGameLost
+  });
 
   return (
     <main>
@@ -94,20 +95,39 @@ export default function AssemblyEndgame() {
         <p>Guess the word within 8 attempts to keep the
           programming world safe from Assembly!</p>
       </header>
-      <section className="game-status">
-        {statusElement}
+
+      <section className={gameStatusClass}>
+        {isGameOver ? (
+          isGameWon ? (
+            <>
+              <h2>You win!</h2>
+              <p>Well done! 🎉</p>
+            </>
+          ) : (
+            <>
+              <h2>Game over!</h2>
+              <p>You lose! Better start learning Assembly 😭</p>
+            </>
+          )
+        ) : (
+          null
+        )
+        }
       </section>
+
       <section className="language-chips">
         {languageElements}
       </section>
+
       <section className="word">
         {letterElements}
       </section>
+
       <section className="keyboard">
         {keyboardElements}
       </section>
-      {newGameElement}
+
+      {isGameOver && <button className="new-game">New Game</button>}
     </main>
   );
 }
-
