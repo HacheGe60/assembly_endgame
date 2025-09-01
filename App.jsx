@@ -7,7 +7,7 @@ import Confetti from "react-confetti";
 
 /**
  * Challenge: Bid farewell to each programming language
- * as it gets erased from existance 👋😭
+ * as it gets erased from existence 👋😭
  * 
  * Use the `getFarewellText` function from the new utils.js
  * file to generate the text.
